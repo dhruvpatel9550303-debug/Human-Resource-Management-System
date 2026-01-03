@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile | Dhruv HRMS</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/feather-icons"></script>
+    <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+    <script src="components/navbar.js"></script>
+    <script src="components/sidebar.js"></script>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <custom-navbar></custom-navbar>
+    <custom-sidebar></custom-sidebar>
+
+    <main class="ml-64 p-8">
+        <div class="flex justify-between items-center mb-8">
+            <h1 class="text-2xl font-bold text-gray-800">My Profile</h1>
+            <button class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg">
+                <i data-feather="edit" class="w-4 h-4 mr-2"></i>
+                Edit Profile
+            </button>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- Profile Card -->
+            <div class="bg-white rounded-xl shadow-md p-6">
+                <div class="flex flex-col items-center mb-6">
+                    <div class="w-24 h-24 rounded-full bg-gray-200 mb-4 flex items-center justify-center">
+                        <span class="text-3xl font-semibold text-gray-600">D</span>
+                    </div>
+                    <h2 class="text-xl font-bold">Dhruv</h2>
+                    <p class="text-gray-500">Software Developer</p>
+                </div>
+
+                <div class="space-y-4">
+                    <div>
+                        <p class="text-sm text-gray-500">Employee ID</p>
+                        <p class="font-medium">EMP-00123</p>
+                    </div>
+                    <div>
+                        <p class="text-sm text-gray-500">Department</p>
+                        <p class="font-medium">Engineering</p>
+                    </div>
+                    <div>
+                        <p class="text-sm text-gray-500">Join Date</p>
+                        <p class="font-medium">January 15, 2020</p>
+                    </div>
+                    <div>
+                        <p class="text-sm text-gray-500">Email</p>
+                        <p class="font-medium">john.doe@company.com</p>
+                    </div>
+                    <div>
+                        <p class="text-sm text-gray-500">Phone</p>
+                        <p class="font-medium">(555) 123-4567</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Additional Info -->
+            <div class="bg-white rounded-xl shadow-md p-6 lg:col-span-2">
+                <h2 class="text-lg font-semibold mb-4">Personal Information</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                    <div>
+                        <p class="text-sm text-gray-500">Date of Birth</p>
+                        <p class="font-medium">June 12, 1985</p>
+                    </div>
+                    <div>
+                        <p class="text-sm text-gray-500">Gender</p>
+                        <p class="font-medium">Male</p>
+                    </div>
+                    <div>
+                        <p class="text-sm text-gray-500">Marital Status</p>
+                        <p class="font-medium">Married</p>
+                    </div>
+                    <div>
+                        <p class="text-sm text-gray-500">Nationality</p>
+                        <p class="font-medium">American</p>
+                    </div>
+                </div>
+
+                <h2 class="text-lg font-semibold mb-4">Emergency Contact</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <p class="text-sm text-gray-500">Name</p>
+                        <p class="font-medium">Jane Doe</p>
+                    </div>
+                    <div>
+                        <p class="text-sm text-gray-500">Relationship</p>
+                        <p class="font-medium">Spouse</p>
+                    </div>
+                    <div>
+                        <p class="text-sm text-gray-500">Phone</p>
+                        <p class="font-medium">(555) 987-6543</p>
+                    </div>
+                    <div>
+                        <p class="text-sm text-gray-500">Address</p>
+                        <p class="font-medium">123 Main St, Anytown, USA</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Salary Structure Section -->
+        <div class="bg-white rounded-xl shadow-md p-6 mt-6">
+            <h2 class="text-lg font-semibold mb-4">Salary Structure</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="border border-gray-200 rounded-lg p-4">
+                    <p class="text-sm text-gray-500">Basic Salary</p>
+                    <h3 class="text-2xl font-bold mt-1">$3,450.00</h3>
+                </div>
+                <div class="border border-gray-200 rounded-lg p-4">
+                    <p class="text-sm text-gray-500">Allowances</p>
+                    <h3 class="text-2xl font-bold mt-1">$450.00</h3>
+                </div>
+                <div class="border border-gray-200 rounded-lg p-4">
+                    <p class="text-sm text-gray-500">Net Salary</p>
+                    <h3 class="text-2xl font-bold mt-1">$3,579.50</h3>
+                </div>
+            </div>
+            <div class="mt-4">
+                <h3 class="text-sm font-semibold mb-2">Deductions</h3>
+                <div class="space-y-2">
+                    <div class="flex justify-between text-sm">
+                        <span class="text-gray-600">Tax</span>
+                        <span class="font-medium">$250.00</span>
+                    </div>
+                    <div class="flex justify-between text-sm">
+                        <span class="text-gray-600">Insurance</span>
+                        <span class="font-medium">$70.50</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Documents Section -->
+        <div class="bg-white rounded-xl shadow-md p-6 mt-6">
+            <h2 class="text-lg font-semibold mb-4">Documents</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div class="border border-gray-200 rounded-lg p-4 hover:bg-gray-50 cursor-pointer">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center">
+                            <i data-feather="file-text" class="w-5 h-5 text-blue-600 mr-3"></i>
+                            <div>
+                                <p class="font-medium text-sm">Employment Contract</p>
+                                <p class="text-xs text-gray-500">PDF • 245 KB</p>
+                            </div>
+                        </div>
+                        <button class="text-blue-600 hover:text-blue-800">
+                            <i data-feather="download" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="border border-gray-200 rounded-lg p-4 hover:bg-gray-50 cursor-pointer">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center">
+                            <i data-feather="file-text" class="w-5 h-5 text-green-600 mr-3"></i>
+                            <div>
+                                <p class="font-medium text-sm">ID Card</p>
+                                <p class="text-xs text-gray-500">PDF • 120 KB</p>
+                            </div>
+                        </div>
+                        <button class="text-blue-600 hover:text-blue-800">
+                            <i data-feather="download" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="border border-gray-200 rounded-lg p-4 hover:bg-gray-50 cursor-pointer">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center">
+                            <i data-feather="file-text" class="w-5 h-5 text-purple-600 mr-3"></i>
+                            <div>
+                                <p class="font-medium text-sm">Salary Slip - Jan 2024</p>
+                                <p class="text-xs text-gray-500">PDF • 180 KB</p>
+                            </div>
+                        </div>
+                        <button class="text-blue-600 hover:text-blue-800">
+                            <i data-feather="download" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        feather.replace();
+        
+        // Check if user is admin for edit permissions
+        document.addEventListener('DOMContentLoaded', () => {
+            const isAdmin = localStorage.getItem('isAdmin') === 'true';
+            const editBtn = document.querySelector('button');
+            
+            editBtn.addEventListener('click', () => {
+                if (isAdmin) {
+                    alert('Admin can edit all employee details. Edit modal would open here.');
+                } else {
+                    alert('You can edit limited fields: Address, Phone, Profile Picture. Edit modal would open here.');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

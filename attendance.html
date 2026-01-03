@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Attendance | HR Harmony Hub</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/feather-icons"></script>
+    <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+    <script src="components/navbar.js"></script>
+    <script src="components/sidebar.js"></script>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <custom-navbar></custom-navbar>
+    <custom-sidebar></custom-sidebar>
+
+    <main class="ml-64 p-8">
+        <div class="flex justify-between items-center mb-8">
+            <h1 class="text-2xl font-bold text-gray-800">Attendance Management</h1>
+            <div class="flex gap-4">
+                <button id="checkInBtn" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg">
+                    <i data-feather="log-in" class="w-4 h-4 mr-2"></i>
+                    Check In
+                </button>
+                <button id="checkOutBtn" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg" disabled>
+                    <i data-feather="log-out" class="w-4 h-4 mr-2"></i>
+                    Check Out
+                </button>
+                <button class="border border-gray-300 bg-white hover:bg-gray-50 text-gray-700 px-4 py-2 rounded-lg">
+                    <i data-feather="download" class="w-4 h-4 mr-2"></i>
+                    Export
+                </button>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-xl shadow-md p-6">
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Check In</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Check Out</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Hours Worked</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200" id="attendanceTable">
+                        <!-- Attendance records will be loaded here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        feather.replace();
+        
+        let attendanceData = [
+            { date: '2024-01-10', checkIn: '08:45', checkOut: '17:30', hours: '8.75', status: 'Present' },
+            { date: '2024-01-09', checkIn: '09:00', checkOut: '17:45', hours: '8.75', status: 'Present' },
+            { date: '2024-01-08', checkIn: '08:30', checkOut: '17:00', hours: '8.5', status: 'Present' },
+            { date: '2024-01-07', checkIn: '08:55', checkOut: '17:15', hours: '8.33', status: 'Present' },
+            { date: '2024-01-06', checkIn: '-', checkOut: '-', hours: '-', status: 'Weekend' },
+            { date: '2024-01-05', checkIn: '-', checkOut: '-', hours: '-', status: 'Weekend' },
+            { date: '2024-01-04', checkIn: '09:15', checkOut: '17:20', hours: '8.08', status: 'Present' }
+        ];
+        
+        let currentCheckInTime = null;
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            loadAttendanceData();
+            setupCheckInOutButtons();
+            updateTodayStatus();
+        });
+        
+        function loadAttendanceData() {
+            const tableBody = document.getElementById('attendanceTable');
+            tableBody.innerHTML = attendanceData.map(item => `
+                <tr>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${formatDate(item.date)}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${item.checkIn !== '-' ? formatTime(item.checkIn) : '-'}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${item.checkOut !== '-' ? formatTime(item.checkOut) : '-'}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${item.hours}</td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
+                            ${getStatusColor(item.status)}">
+                            ${item.status}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        <button class="text-blue-600 hover:text-blue-800 mr-3" onclick="editAttendance('${item.date}')">Edit</button>
+                        <button class="text-red-600 hover:text-red-800" onclick="deleteAttendance('${item.date}')">Delete</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+        
+        function setupCheckInOutButtons() {
+            const checkInBtn = document.getElementById('checkInBtn');
+            const checkOutBtn = document.getElementById('checkOutBtn');
+            
+            if (!checkInBtn || !checkOutBtn) return;
+            
+            checkInBtn.addEventListener('click', () => {
+                const now = new Date();
+                currentCheckInTime = now.toTimeString().slice(0, 5);
+                checkInBtn.disabled = true;
+                checkInBtn.textContent = `Checked in at ${formatTime(currentCheckInTime)}`;
+                checkOutBtn.disabled = false;
+                
+                // Add today's entry if not exists
+                const today = new Date().toISOString().split('T')[0];
+                const todayEntry = attendanceData.find(entry => entry.date === today);
+                if (!todayEntry) {
+                    attendanceData.unshift({
+                        date: today,
+                        checkIn: currentCheckInTime,
+                        checkOut: '-',
+                        hours: '-',
+                        status: 'Present'
+                    });
+                    loadAttendanceData();
+                }
+                
+                alert(`Checked in at ${formatTime(currentCheckInTime)}`);
+            });
+            
+            checkOutBtn.addEventListener('click', () => {
+                if (!currentCheckInTime) {
+                    alert('Please check in first!');
+                    return;
+                }
+                
+                const now = new Date();
+                const checkOutTime = now.toTimeString().slice(0, 5);
+                const hours = calculateHours(currentCheckInTime, checkOutTime);
+                
+                checkOutBtn.disabled = true;
+                checkOutBtn.textContent = `Checked out at ${formatTime(checkOutTime)}`;
+                
+                // Update today's entry
+                const today = new Date().toISOString().split('T')[0];
+                const todayEntry = attendanceData.find(entry => entry.date === today);
+                if (todayEntry) {
+                    todayEntry.checkOut = checkOutTime;
+                    todayEntry.hours = hours;
+                    loadAttendanceData();
+                }
+                
+                alert(`Checked out at ${formatTime(checkOutTime)}. Total hours: ${hours}`);
+            });
+        }
+        
+        function updateTodayStatus() {
+            const today = new Date().toISOString().split('T')[0];
+            const todayEntry = attendanceData.find(entry => entry.date === today);
+            
+            const checkInBtn = document.getElementById('checkInBtn');
+            const checkOutBtn = document.getElementById('checkOutBtn');
+            
+            if (todayEntry && todayEntry.checkIn !== '-') {
+                checkInBtn.disabled = true;
+                checkInBtn.textContent = `Checked in at ${formatTime(todayEntry.checkIn)}`;
+                
+                if (todayEntry.checkOut !== '-') {
+                    checkOutBtn.disabled = true;
+                    checkOutBtn.textContent = `Checked out at ${formatTime(todayEntry.checkOut)}`;
+                } else {
+                    checkOutBtn.disabled = false;
+                }
+            }
+        }
+        
+        function calculateHours(checkIn, checkOut) {
+            const [inHours, inMinutes] = checkIn.split(':').map(Number);
+            const [outHours, outMinutes] = checkOut.split(':').map(Number);
+            
+            const inTotalMinutes = inHours * 60 + inMinutes;
+            const outTotalMinutes = outHours * 60 + outMinutes;
+            
+            const diffMinutes = outTotalMinutes - inTotalMinutes;
+            const hours = (diffMinutes / 60).toFixed(2);
+            
+            return hours;
+        }
+        
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+        }
+        
+        function formatTime(timeString) {
+            if (timeString === '-') return '-';
+            const [hours, minutes] = timeString.split(':');
+            const hour = parseInt(hours);
+            const ampm = hour >= 12 ? 'PM' : 'AM';
+            const displayHour = hour % 12 || 12;
+            return `${displayHour}:${minutes} ${ampm}`;
+        }
+        
+        function getStatusColor(status) {
+            switch (status) {
+                case 'Present': return 'bg-green-100 text-green-800';
+                case 'Absent': return 'bg-red-100 text-red-800';
+                case 'Late': return 'bg-yellow-100 text-yellow-800';
+                case 'Half-day': return 'bg-orange-100 text-orange-800';
+                case 'Weekend': return 'bg-blue-100 text-blue-800';
+                default: return 'bg-gray-100 text-gray-800';
+            }
+        }
+        
+        function editAttendance(date) {
+            // In a real app, would open an edit modal
+            alert(`Edit functionality for ${formatDate(date)} would be implemented here`);
+        }
+        
+        function deleteAttendance(date) {
+            if (confirm(`Are you sure you want to delete attendance record for ${formatDate(date)}?`)) {
+                attendanceData = attendanceData.filter(entry => entry.date !== date);
+                loadAttendanceData();
+            }
+        }
+    </script>
+</body>
+</html>

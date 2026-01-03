@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reports & Analytics | HR Harmony Hub</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/feather-icons"></script>
+    <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+    <script src="components/navbar.js"></script>
+    <script src="components/sidebar.js"></script>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <custom-navbar></custom-navbar>
+    <custom-sidebar></custom-sidebar>
+
+    <main class="ml-64 p-8">
+        <div class="flex justify-between items-center mb-8">
+            <h1 class="text-2xl font-bold text-gray-800">Reports & Analytics</h1>
+            <div class="flex gap-4">
+                <select id="reportPeriod" class="border border-gray-300 rounded-lg px-4 py-2 text-sm">
+                    <option value="week">This Week</option>
+                    <option value="month">This Month</option>
+                    <option value="quarter">This Quarter</option>
+                    <option value="year">This Year</option>
+                </select>
+                <button id="exportBtn" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm">
+                    <i data-feather="download" class="w-4 h-4 mr-2"></i>
+                    Export Report
+                </button>
+            </div>
+        </div>
+
+        <!-- Key Metrics -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+            <div class="bg-white p-6 rounded-xl shadow-md">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-500 text-sm">Total Employees</p>
+                        <h3 class="text-2xl font-bold mt-1" id="totalEmpMetric">0</h3>
+                        <p class="text-xs text-green-600 mt-1">+2 from last month</p>
+                    </div>
+                    <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+                        <i data-feather="users" class="text-blue-600"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white p-6 rounded-xl shadow-md">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-500 text-sm">Attendance Rate</p>
+                        <h3 class="text-2xl font-bold mt-1" id="attendanceRate">0%</h3>
+                        <p class="text-xs text-green-600 mt-1">+1.2% from last month</p>
+                    </div>
+                    <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
+                        <i data-feather="check-circle" class="text-green-600"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white p-6 rounded-xl shadow-md">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-500 text-sm">Leave Utilization</p>
+                        <h3 class="text-2xl font-bold mt-1" id="leaveUtilization">0%</h3>
+                        <p class="text-xs text-red-600 mt-1">-0.5% from last month</p>
+                    </div>
+                    <div class="w-12 h-12 bg-yellow-100 rounded-full flex items-center justify-center">
+                        <i data-feather="calendar" class="text-yellow-600"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white p-6 rounded-xl shadow-md">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-500 text-sm">Avg. Working Hours</p>
+                        <h3 class="text-2xl font-bold mt-1" id="avgHours">0h</h3>
+                        <p class="text-xs text-green-600 mt-1">+0.3h from last month</p>
+                    </div>
+                    <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center">
+                        <i data-feather="clock" class="text-purple-600"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Charts Section -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+            <!-- Attendance Trend -->
+            <div class="bg-white p-6 rounded-xl shadow-md">
+                <h2 class="text-lg font-semibold mb-4">Attendance Trend</h2>
+                <div class="h-64 flex items-center justify-center bg-gray-50 rounded-lg">
+                    <div class="text-center">
+                        <i data-feather="bar-chart-2" class="w-12 h-12 text-gray-400 mb-2"></i>
+                        <p class="text-gray-500">Attendance trend chart would be displayed here</p>
+                        <p class="text-sm text-gray-400 mt-2">Integration with Chart.js or similar library</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Department Distribution -->
+            <div class="bg-white p-6 rounded-xl shadow-md">
+                <h2 class="text-lg font-semibold mb-4">Department Distribution</h2>
+                <div class="h-64 flex items-center justify-center bg-gray-50 rounded-lg">
+                    <div class="text-center">
+                        <i data-feather="pie-chart" class="w-12 h-12 text-gray-400 mb-2"></i>
+                        <p class="text-gray-500">Department distribution chart would be displayed here</p>
+                        <p class="text-sm text-gray-400 mt-2">Integration with Chart.js or similar library</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Detailed Reports -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- Leave Summary -->
+            <div class="bg-white p-6 rounded-xl shadow-md">
+                <h2 class="text-lg font-semibold mb-4">Leave Summary</h2>
+                <div class="space-y-4" id="leaveSummary">
+                    <!-- Leave data will be loaded here -->
+                </div>
+            </div>
+
+            <!-- Top Performers -->
+            <div class="bg-white p-6 rounded-xl shadow-md">
+                <h2 class="text-lg font-semibold mb-4">Top Performers</h2>
+                <div class="space-y-4" id="topPerformers">
+                    <!-- Performers data will be loaded here -->
+                </div>
+            </div>
+
+            <!-- Recent Activities -->
+            <div class="bg-white p-6 rounded-xl shadow-md">
+                <h2 class="text-lg font-semibold mb-4">Recent Activities</h2>
+                <div class="space-y-4" id="recentActivities">
+                    <!-- Activities will be loaded here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Exportable Reports Table -->
+        <div class="bg-white rounded-xl shadow-md mt-8">
+            <div class="p-6 border-b border-gray-200">
+                <h2 class="text-lg font-semibold">Detailed Employee Report</h2>
+                <p class="text-sm text-gray-500 mt-1">Comprehensive view of all employee metrics</p>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Employee</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Department</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Attendance Rate</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Leave Used</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Avg Hours</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Performance</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200" id="detailedReportTable">
+                        <!-- Report data will be loaded here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        feather.replace();
+
+        // Simulated report data
+        const reportData = {
+            metrics: {
+                totalEmployees: 5,
+                attendanceRate: 94.2,
+                leaveUtilization: 68.5,
+                avgHours: 8.3
+            },
+            leaveSummary: [
+                { type: 'Vacation', used: 45, total: 60, percentage: 75 },
+                { type: 'Sick Leave', used: 3, total: 10, percentage: 30 },
+                { type: 'Personal', used: 8, total: 15, percentage: 53 }
+            ],
+            topPerformers: [
+                { name: 'John Doe', score: 95, metric: 'Attendance Rate' },
+                { name: 'Alice Brown', score: 92, metric: 'Attendance Rate' },
+                { name: 'Charlie Wilson', score: 88, metric: 'Attendance Rate' }
+            ],
+            recentActivities: [
+                { action: 'Leave approved', employee: 'John Doe', date: '2024-01-10' },
+                { action: 'New employee added', employee: 'Sarah Davis', date: '2024-01-09' },
+                { action: 'Attendance correction', employee: 'Bob Johnson', date: '2024-01-08' },
+                { action: 'Profile updated', employee: 'Alice Brown', date: '2024-01-07' }
+            ],
+            detailedReport: [
+                { name: 'John Doe', department: 'Engineering', attendanceRate: 98, leaveUsed: 12, avgHours: 8.5, performance: 'Excellent' },
+                { name: 'Jane Smith', department: 'HR', attendanceRate: 95, leaveUsed: 8, avgHours: 8.2, performance: 'Good' },
+                { name: 'Bob Johnson', department: 'Finance', attendanceRate: 92, leaveUsed: 15, avgHours: 8.0, performance: 'Good' },
+                { name: 'Alice Brown', department: 'Marketing', attendanceRate: 96, leaveUsed: 10, avgHours: 8.4, performance: 'Excellent' },
+                { name: 'Charlie Wilson', department: 'Engineering', attendanceRate: 94, leaveUsed: 6, avgHours: 8.6, performance: 'Excellent' }
+            ]
+        };
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadMetrics();
+            loadLeaveSummary();
+            loadTopPerformers();
+            loadRecentActivities();
+            loadDetailedReport();
+            setupEventListeners();
+        });
+
+        function loadMetrics() {
+            document.getElementById('totalEmpMetric').textContent = reportData.metrics.totalEmployees;
+            document.getElementById('attendanceRate').textContent = `${reportData.metrics.attendanceRate}%`;
+            document.getElementById('leaveUtilization').textContent = `${reportData.metrics.leaveUtilization}%`;
+            document.getElementById('avgHours').textContent = `${reportData.metrics.avgHours}h`;
+        }
+
+        function loadLeaveSummary() {
+            const container = document.getElementById('leaveSummary');
+            container.innerHTML = reportData.leaveSummary.map(leave => `
+                <div>
+                    <div class="flex justify-between mb-1">
+                        <span class="text-sm font-medium">${leave.type}</span>
+                        <span class="text-sm text-gray-500">${leave.used}/${leave.total} days</span>
+                    </div>
+                    <div class="w-full bg-gray-200 rounded-full h-2">
+                        <div class="bg-blue-600 h-2 rounded-full" style="width: ${leave.percentage}%"></div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function loadTopPerformers() {
+            const container = document.getElementById('topPerformers');
+            container.innerHTML = reportData.topPerformers.map(performer => `
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center">
+                        <div class="w-8 h-8 rounded-full bg-gray-300 flex items-center justify-center mr-3">
+                            <span class="text-xs font-medium text-gray-700">${performer.name.split(' ').map(n => n[0]).join('')}</span>
+                        </div>
+                        <div>
+                            <p class="text-sm font-medium">${performer.name}</p>
+                            <p class="text-xs text-gray-500">${performer.metric}</p>
+                        </div>
+                    </div>
+                    <span class="text-sm font-bold text-green-600">${performer.score}%</span>
+                </div>
+            `).join('');
+        }
+
+        function loadRecentActivities() {
+            const container = document.getElementById('recentActivities');
+            container.innerHTML = reportData.recentActivities.map(activity => `
+                <div class="flex items-start">
+                    <div class="w-2 h-2 rounded-full bg-blue-600 mt-2 mr-3"></div>
+                    <div>
+                        <p class="text-sm font-medium">${activity.action}</p>
+                        <p class="text-xs text-gray-500">${activity.employee} • ${activity.date}</p>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function loadDetailedReport() {
+            const tableBody = document.getElementById('detailedReportTable');
+            tableBody.innerHTML = reportData.detailedReport.map(emp => `
+                <tr>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="flex items-center">
+                            <div class="flex-shrink-0 h-10 w-10">
+                                <div class="h-10 w-10 rounded-full bg-gray-300 flex items-center justify-center">
+                                    <span class="text-sm font-medium text-gray-700">${emp.name.split(' ').map(n => n[0]).join('')}</span>
+                                </div>
+                            </div>
+                            <div class="ml-4">
+                                <div class="text-sm font-medium text-gray-900">${emp.name}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${emp.department}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${emp.attendanceRate}%</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${emp.leaveUsed} days</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${emp.avgHours}h</td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
+                            ${emp.performance === 'Excellent' ? 'bg-green-100 text-green-800' : 'bg-blue-100 text-blue-800'}">
+                            ${emp.performance}
+                        </span>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function setupEventListeners() {
+            document.getElementById('exportBtn').addEventListener('click', () => {
+                // Simulate export functionality
+                alert('Export functionality would generate a PDF/Excel report with all the data shown above.');
+            });
+
+            document.getElementById('reportPeriod').addEventListener('change', () => {
+                // In a real app, would reload data based on selected period
+                console.log('Report period changed to:', document.getElementById('reportPeriod').value);
+            });
+        }
+    </script>
+</body>
+</html>

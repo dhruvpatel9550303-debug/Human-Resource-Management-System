@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Approvals | HR Harmony Hub</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/feather-icons"></script>
+    <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+    <script src="components/navbar.js"></script>
+    <script src="components/sidebar.js"></script>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <custom-navbar></custom-navbar>
+    <custom-sidebar></custom-sidebar>
+
+    <main class="ml-64 p-8">
+        <div class="flex justify-between items-center mb-8">
+            <h1 class="text-2xl font-bold text-gray-800">Approval Center</h1>
+            <div class="flex gap-4">
+                <select id="filterType" class="border border-gray-300 rounded-lg px-4 py-2 text-sm">
+                    <option value="all">All Requests</option>
+                    <option value="leave">Leave Requests</option>
+                    <option value="attendance">Attendance Corrections</option>
+                </select>
+                <select id="filterStatus" class="border border-gray-300 rounded-lg px-4 py-2 text-sm">
+                    <option value="pending">Pending</option>
+                    <option value="approved">Approved</option>
+                    <option value="rejected">Rejected</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Approval Stats -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+            <div class="bg-white p-6 rounded-xl shadow-md">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-500 text-sm">Pending Approvals</p>
+                        <h3 class="text-2xl font-bold mt-1" id="pendingCount">0</h3>
+                    </div>
+                    <div class="w-12 h-12 bg-yellow-100 rounded-full flex items-center justify-center">
+                        <i data-feather="clock" class="text-yellow-600"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white p-6 rounded-xl shadow-md">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-500 text-sm">Approved Today</p>
+                        <h3 class="text-2xl font-bold mt-1" id="approvedToday">0</h3>
+                    </div>
+                    <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
+                        <i data-feather="check-circle" class="text-green-600"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white p-6 rounded-xl shadow-md">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-500 text-sm">Rejected This Week</p>
+                        <h3 class="text-2xl font-bold mt-1" id="rejectedWeek">0</h3>
+                    </div>
+                    <div class="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center">
+                        <i data-feather="x-circle" class="text-red-600"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white p-6 rounded-xl shadow-md">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-500 text-sm">Total This Month</p>
+                        <h3 class="text-2xl font-bold mt-1" id="totalMonth">0</h3>
+                    </div>
+                    <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+                        <i data-feather="calendar" class="text-blue-600"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Approval Requests -->
+        <div class="space-y-6" id="approvalRequests">
+            <!-- Requests will be loaded here -->
+        </div>
+    </main>
+
+    <!-- Approval Modal -->
+    <div id="approvalModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
+        <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+            <div class="mt-3">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-lg font-medium text-gray-900" id="modalTitle">Review Request</h3>
+                    <button id="closeApprovalModal" class="text-gray-400 hover:text-gray-600">
+                        <i data-feather="x" class="w-6 h-6"></i>
+                    </button>
+                </div>
+                <div id="requestDetails" class="mb-4">
+                    <!-- Request details will be loaded here -->
+                </div>
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-bold mb-2">Comments (Optional)</label>
+                    <textarea id="approvalComments" rows="3" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" placeholder="Add any comments..."></textarea>
+                </div>
+                <div class="flex justify-end gap-4">
+                    <button id="rejectBtn" class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700">Reject</button>
+                    <button id="approveBtn" class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">Approve</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        feather.replace();
+
+        // Simulated approval requests data
+        let approvalRequests = [
+            {
+                id: 1,
+                type: 'leave',
+                employee: 'John Doe',
+                employeeId: 'EMP-001',
+                requestType: 'Vacation Leave',
+                startDate: '2024-01-15',
+                endDate: '2024-01-20',
+                days: 6,
+                reason: 'Family vacation',
+                status: 'pending',
+                submittedDate: '2024-01-10',
+                comments: ''
+            },
+            {
+                id: 2,
+                type: 'leave',
+                employee: 'Alice Brown',
+                employeeId: 'EMP-004',
+                requestType: 'Sick Leave',
+                startDate: '2024-01-12',
+                endDate: '2024-01-12',
+                days: 1,
+                reason: 'Medical appointment',
+                status: 'pending',
+                submittedDate: '2024-01-11',
+                comments: ''
+            },
+            {
+                id: 3,
+                type: 'attendance',
+                employee: 'Bob Johnson',
+                employeeId: 'EMP-003',
+                requestType: 'Late Check-in Correction',
+                date: '2024-01-08',
+                originalTime: '10:30',
+                requestedTime: '09:00',
+                reason: 'Traffic delay',
+                status: 'pending',
+                submittedDate: '2024-01-09',
+                comments: ''
+            },
+            {
+                id: 4,
+                type: 'leave',
+                employee: 'Charlie Wilson',
+                employeeId: 'EMP-005',
+                requestType: 'Personal Leave',
+                startDate: '2024-01-25',
+                endDate: '2024-01-26',
+                days: 2,
+                reason: 'Personal matters',
+                status: 'approved',
+                submittedDate: '2024-01-05',
+                approvedDate: '2024-01-06',
+                comments: 'Approved for personal reasons'
+            }
+        ];
+
+        let currentRequestId = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadApprovalRequests();
+            updateStats();
+            setupEventListeners();
+        });
+
+        function loadApprovalRequests() {
+            const container = document.getElementById('approvalRequests');
+            const filterType = document.getElementById('filterType').value;
+            const filterStatus = document.getElementById('filterStatus').value;
+
+            const filtered = approvalRequests.filter(req => {
+                const matchesType = filterType === 'all' || req.type === filterType;
+                const matchesStatus = filterStatus === 'all' || req.status === filterStatus;
+                return matchesType && matchesStatus;
+            });
+
+            container.innerHTML = filtered.map(req => `
+                <div class="bg-white rounded-xl shadow-md p-6">
+                    <div class="flex justify-between items-start mb-4">
+                        <div>
+                            <h3 class="text-lg font-semibold">${req.employee}</h3>
+                            <p class="text-sm text-gray-500">${req.employeeId} • ${req.type === 'leave' ? 'Leave Request' : 'Attendance Correction'}</p>
+                        </div>
+                        <span class="px-3 py-1 text-sm rounded-full 
+                            ${req.status === 'approved' ? 'bg-green-100 text-green-800' : 
+                              req.status === 'rejected' ? 'bg-red-100 text-red-800' : 
+                              'bg-yellow-100 text-yellow-800'}">
+                            ${req.status.charAt(0).toUpperCase() + req.status.slice(1)}
+                        </span>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                        ${req.type === 'leave' ? `
+                            <div>
+                                <p class="text-sm text-gray-500">Leave Type</p>
+                                <p class="font-medium">${req.requestType}</p>
+                            </div>
+                            <div>
+                                <p class="text-sm text-gray-500">Duration</p>
+                                <p class="font-medium">${req.startDate} to ${req.endDate} (${req.days} days)</p>
+                            </div>
+                        ` : `
+                            <div>
+                                <p class="text-sm text-gray-500">Correction Type</p>
+                                <p class="font-medium">${req.requestType}</p>
+                            </div>
+                            <div>
+                                <p class="text-sm text-gray-500">Date & Time</p>
+                                <p class="font-medium">${req.date} • ${req.originalTime} → ${req.requestedTime}</p>
+                            </div>
+                        `}
+                    </div>
+                    
+                    <div class="mb-4">
+                        <p class="text-sm text-gray-500">Reason</p>
+                        <p class="font-medium">${req.reason}</p>
+                    </div>
+                    
+                    <div class="flex justify-between items-center">
+                        <div class="text-sm text-gray-500">
+                            Submitted: ${req.submittedDate}
+                            ${req.approvedDate ? ` • ${req.status === 'approved' ? 'Approved' : 'Rejected'}: ${req.approvedDate}` : ''}
+                        </div>
+                        ${req.status === 'pending' ? `
+                            <div class="flex gap-2">
+                                <button onclick="openApprovalModal(${req.id})" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm">
+                                    Review
+                                </button>
+                            </div>
+                        ` : ''}
+                    </div>
+                    
+                    ${req.comments ? `
+                        <div class="mt-4 p-3 bg-gray-50 rounded-lg">
+                            <p class="text-sm text-gray-500">Comments:</p>
+                            <p class="text-sm">${req.comments}</p>
+                        </div>
+                    ` : ''}
+                </div>
+            `).join('');
+        }
+
+        function updateStats() {
+            const pending = approvalRequests.filter(r => r.status === 'pending').length;
+            const approvedToday = approvalRequests.filter(r => r.status === 'approved' && r.approvedDate === new Date().toISOString().split('T')[0]).length;
+            const rejectedWeek = approvalRequests.filter(r => {
+                if (r.status !== 'rejected') return false;
+                const approvedDate = new Date(r.approvedDate);
+                const weekAgo = new Date();
+                weekAgo.setDate(weekAgo.getDate() - 7);
+                return approvedDate >= weekAgo;
+            }).length;
+            const totalMonth = approvalRequests.filter(r => {
+                const submittedDate = new Date(r.submittedDate);
+                const now = new Date();
+                return submittedDate.getMonth() === now.getMonth() && submittedDate.getFullYear() === now.getFullYear();
+            }).length;
+
+            document.getElementById('pendingCount').textContent = pending;
+            document.getElementById('approvedToday').textContent = approvedToday;
+            document.getElementById('rejectedWeek').textContent = rejectedWeek;
+            document.getElementById('totalMonth').textContent = totalMonth;
+        }
+
+        function setupEventListeners() {
+            document.getElementById('filterType').addEventListener('change', loadApprovalRequests);
+            document.getElementById('filterStatus').addEventListener('change', loadApprovalRequests);
+
+            document.getElementById('closeApprovalModal').addEventListener('click', () => {
+                document.getElementById('approvalModal').classList.add('hidden');
+            });
+
+            document.getElementById('approveBtn').addEventListener('click', () => {
+                if (currentRequestId) {
+                    approveRequest(currentRequestId, 'approved');
+                }
+            });
+
+            document.getElementById('rejectBtn').addEventListener('click', () => {
+                if (currentRequestId) {
+                    approveRequest(currentRequestId, 'rejected');
+                }
+            });
+        }
+
+        function openApprovalModal(requestId) {
+            const request = approvalRequests.find(r => r.id === requestId);
+            if (!request) return;
+
+            currentRequestId = requestId;
+            document.getElementById('modalTitle').textContent = `Review ${request.type === 'leave' ? 'Leave' : 'Attendance'} Request`;
+
+            const details = document.getElementById('requestDetails');
+            details.innerHTML = `
+                <div class="space-y-3">
+                    <div>
+                        <p class="text-sm font-medium text-gray-700">Employee</p>
+                        <p class="text-sm text-gray-600">${request.employee} (${request.employeeId})</p>
+                    </div>
+                    ${request.type === 'leave' ? `
+                        <div>
+                            <p class="text-sm font-medium text-gray-700">Leave Details</p>
+                            <p class="text-sm text-gray-600">${request.requestType} from ${request.startDate} to ${request.endDate} (${request.days} days)</p>
+                        </div>
+                    ` : `
+                        <div>
+                            <p class="text-sm font-medium text-gray-700">Correction Details</p>
+                            <p class="text-sm text-gray-600">${request.requestType} on ${request.date}: ${request.originalTime} → ${request.requestedTime}</p>
+                        </div>
+                    `}
+                    <div>
+                        <p class="text-sm font-medium text-gray-700">Reason</p>
+                        <p class="text-sm text-gray-600">${request.reason}</p>
+                    </div>
+                    <div>
+                        <p class="text-sm font-medium text-gray-700">Submitted</p>
+                        <p class="text-sm text-gray-600">${request.submittedDate}</p>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('approvalComments').value = request.comments || '';
+            document.getElementById('approvalModal').classList.remove('hidden');
+        }
+
+        function approveRequest(requestId, status) {
+            const request = approvalRequests.find(r => r.id === requestId);
+            if (!request) return;
+
+            const comments = document.getElementById('approvalComments').value;
+            request.status = status;
+            request.comments = comments;
+            request.approvedDate = new Date().toISOString().split('T')[0];
+
+            loadApprovalRequests();
+            updateStats();
+            document.getElementById('approvalModal').classList.add('hidden');
+            currentRequestId = null;
+
+            // Show success message
+            alert(`${status.charAt(0).toUpperCase() + status.slice(1)} successfully!`);
+        }
+    </script>
+</body>
+</html>

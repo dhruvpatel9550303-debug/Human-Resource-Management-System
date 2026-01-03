@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard | Dhruv HRMS</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/feather-icons"></script>
+    <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+    <script src="components/navbar.js"></script>
+    <script src="components/auth-modal.js"></script>
+    <script src="components/sidebar.js"></script>
+    <script src="components/notifications.js"></script>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <custom-navbar></custom-navbar>
+    <custom-sidebar></custom-sidebar>
+
+    <main class="ml-64 p-8">
+        <!-- Dashboard Header -->
+        <div class="flex justify-between items-center mb-8">
+            <h1 class="text-2xl font-bold text-gray-800">Dashboard</h1>
+            <div class="bg-white px-4 py-2 rounded-lg shadow-sm">
+                <span class="text-gray-600">Welcome back,</span>
+                <span class="font-medium" id="userName">Dhruv</span>
+            </div>
+        </div>
+
+        <!-- Stats Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <!-- Attendance Card -->
+            <div class="bg-white p-6 rounded-xl shadow-md">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-500 text-sm">Attendance</p>
+                        <h3 class="text-2xl font-bold mt-1" id="attendanceStat">24/30</h3>
+                    </div>
+                    <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+                        <i data-feather="clock" class="text-blue-600"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Leave Balance Card -->
+            <div class="bg-white p-6 rounded-xl shadow-md">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-500 text-sm">Leave Balance</p>
+                        <h3 class="text-2xl font-bold mt-1" id="leaveStat">12 days</h3>
+                    </div>
+                    <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
+                        <i data-feather="calendar" class="text-green-600"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Payroll Card -->
+            <div class="bg-white p-6 rounded-xl shadow-md">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-500 text-sm">Next Payroll</p>
+                        <h3 class="text-2xl font-bold mt-1" id="payrollStat">$3,450</h3>
+                    </div>
+                    <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center">
+                        <i data-feather="dollar-sign" class="text-purple-600"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Profile Card -->
+            <div class="bg-white p-6 rounded-xl shadow-md">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-500 text-sm">Profile</p>
+                        <h3 class="text-2xl font-bold mt-1">85%</h3>
+                    </div>
+                    <div class="w-12 h-12 bg-yellow-100 rounded-full flex items-center justify-center">
+                        <i data-feather="user" class="text-yellow-600"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Employee Dashboard Content -->
+        <div id="employeeDashboard" class="hidden">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Attendance Section -->
+                <div class="bg-white p-6 rounded-xl shadow-md lg:col-span-2">
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-xl font-semibold">Attendance</h2>
+                        <button id="checkInOutBtn" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm">
+                            Check In
+                        </button>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Check In</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Check Out</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white divide-y divide-gray-200" id="attendanceTable">
+                                <!-- Attendance data will be loaded here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Leave Requests Section -->
+                <div class="bg-white p-6 rounded-xl shadow-md">
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-xl font-semibold">Leave Requests</h2>
+                        <button id="newLeaveBtn" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm">
+                            New Request
+                        </button>
+                    </div>
+                    <div class="space-y-4" id="leaveRequests">
+                        <!-- Leave requests will be loaded here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Admin Dashboard Content -->
+        <div id="adminDashboard" class="hidden">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                <!-- Employee List Section -->
+                <div class="bg-white p-6 rounded-xl shadow-md">
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-xl font-semibold">Employee List</h2>
+                        <a href="/employees.html" class="text-blue-600 hover:text-blue-800 text-sm">View All</a>
+                    </div>
+                    <div class="space-y-3" id="employeeList">
+                        <!-- Employee list will be loaded here -->
+                    </div>
+                </div>
+
+                <!-- Attendance Records Section -->
+                <div class="bg-white p-6 rounded-xl shadow-md">
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-xl font-semibold">Attendance Records</h2>
+                        <a href="/attendance.html" class="text-blue-600 hover:text-blue-800 text-sm">View All</a>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Employee</th>
+                                    <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+                                    <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white divide-y divide-gray-200" id="attendanceRecords">
+                                <!-- Attendance records will be loaded here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Leave Approvals Section -->
+            <div class="bg-white p-6 rounded-xl shadow-md">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-xl font-semibold">Leave Approvals</h2>
+                    <a href="/approvals.html" class="text-blue-600 hover:text-blue-800 text-sm">View All</a>
+                </div>
+                <div class="space-y-4" id="leaveApprovals">
+                    <!-- Leave approvals will be loaded here -->
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <custom-auth-modal></custom-auth-modal>
+
+    <script>
+        feather.replace();
+        
+        // Simulate fetching user data
+        document.addEventListener('DOMContentLoaded', () => {
+            // Check user role from localStorage or URL
+            const isAdmin = localStorage.getItem('isAdmin') === 'true' || window.location.search.includes('admin');
+            const userEmail = localStorage.getItem('userEmail') || 'User';
+            const employeeId = localStorage.getItem('employeeId') || '';
+            
+            // Set user name
+            document.getElementById('userName').textContent = 'Dhruv';
+            
+            // Show appropriate dashboard
+            if (isAdmin) {
+                document.getElementById('employeeDashboard').classList.add('hidden');
+                document.getElementById('adminDashboard').classList.remove('hidden');
+                loadAdminDashboard();
+            } else {
+                document.getElementById('employeeDashboard').classList.remove('hidden');
+                document.getElementById('adminDashboard').classList.add('hidden');
+                loadEmployeeDashboard();
+            }
+        });
+        
+        function loadEmployeeDashboard() {
+            loadAttendanceData();
+            loadLeaveRequests();
+            setupCheckInOut();
+        }
+        
+        function loadAdminDashboard() {
+            loadEmployeeList();
+            loadAttendanceRecords();
+            loadLeaveApprovals();
+        }
+
+        function loadAttendanceData() {
+            // Simulated data - would come from API in real app
+            const data = [
+                { date: '2023-06-01', checkIn: '08:45', checkOut: '17:30', status: 'Present' },
+                { date: '2023-05-31', checkIn: '09:00', checkOut: '17:45', status: 'Present' },
+                { date: '2023-05-30', checkIn: '08:30', checkOut: '17:00', status: 'Present' },
+                { date: '2023-05-29', checkIn: '-', checkOut: '-', status: 'Weekend' },
+                { date: '2023-05-28', checkIn: '-', checkOut: '-', status: 'Weekend' }
+            ];
+
+            const tableBody = document.getElementById('attendanceTable');
+            tableBody.innerHTML = data.map(item => `
+                <tr>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${item.date}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${item.checkIn}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${item.checkOut}</td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
+                            ${item.status === 'Present' ? 'bg-green-100 text-green-800' : 
+                              item.status === 'Weekend' ? 'bg-blue-100 text-blue-800' : 
+                              'bg-yellow-100 text-yellow-800'}">
+                            ${item.status}
+                        </span>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function loadLeaveRequests() {
+            // Simulated data - would come from API in real app
+            const data = [
+                { id: 1, date: '2023-06-10', type: 'Vacation', status: 'Pending', days: 3 },
+                { id: 2, date: '2023-05-15', type: 'Sick', status: 'Approved', days: 2 },
+                { id: 3, date: '2023-04-20', type: 'Personal', status: 'Rejected', days: 1 }
+            ];
+
+            const container = document.getElementById('leaveRequests');
+            container.innerHTML = data.map(item => `
+                <div class="border border-gray-200 rounded-lg p-4">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <h3 class="font-medium">${item.type} Leave</h3>
+                            <p class="text-sm text-gray-500">${item.date} • ${item.days} day(s)</p>
+                        </div>
+                        <span class="px-2 py-1 text-xs rounded-full 
+                            ${item.status === 'Approved' ? 'bg-green-100 text-green-800' : 
+                              item.status === 'Rejected' ? 'bg-red-100 text-red-800' : 
+                              'bg-yellow-100 text-yellow-800'}">
+                            ${item.status}
+                        </span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function setupCheckInOut() {
+            const btn = document.getElementById('checkInOutBtn');
+            let isCheckedIn = false;
+            
+            btn.addEventListener('click', () => {
+                isCheckedIn = !isCheckedIn;
+                btn.textContent = isCheckedIn ? 'Check Out' : 'Check In';
+                btn.className = isCheckedIn ? 
+                    'bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg text-sm' : 
+                    'bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm';
+                
+                // In a real app, would call API to record check in/out
+                console.log(isCheckedIn ? 'Checked in' : 'Checked out');
+            });
+        }
+        
+        function loadEmployeeList() {
+            const employees = [
+                { id: 'EMP-001', name: 'John Doe', department: 'Engineering', status: 'Active' },
+                { id: 'EMP-002', name: 'Jane Smith', department: 'HR', status: 'Active' },
+                { id: 'EMP-003', name: 'Bob Johnson', department: 'Finance', status: 'On Leave' }
+            ];
+            
+            const container = document.getElementById('employeeList');
+            container.innerHTML = employees.map(emp => `
+                <div class="flex items-center justify-between p-3 border border-gray-200 rounded-lg">
+                    <div>
+                        <p class="font-medium text-sm">${emp.name}</p>
+                        <p class="text-xs text-gray-500">${emp.id} • ${emp.department}</p>
+                    </div>
+                    <span class="px-2 py-1 text-xs rounded-full ${emp.status === 'Active' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}">
+                        ${emp.status}
+                    </span>
+                </div>
+            `).join('');
+        }
+        
+        function loadAttendanceRecords() {
+            const records = [
+                { employee: 'John Doe', status: 'Present', date: '2024-01-10' },
+                { employee: 'Jane Smith', status: 'Present', date: '2024-01-10' },
+                { employee: 'Bob Johnson', status: 'Absent', date: '2024-01-10' }
+            ];
+            
+            const tableBody = document.getElementById('attendanceRecords');
+            tableBody.innerHTML = records.map(record => `
+                <tr>
+                    <td class="px-4 py-2 text-sm text-gray-900">${record.employee}</td>
+                    <td class="px-4 py-2 text-sm">
+                        <span class="px-2 py-1 text-xs rounded-full ${record.status === 'Present' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}">
+                            ${record.status}
+                        </span>
+                    </td>
+                    <td class="px-4 py-2 text-sm text-gray-500">${record.date}</td>
+                </tr>
+            `).join('');
+        }
+        
+        function loadLeaveApprovals() {
+            const approvals = [
+                { id: 1, employee: 'John Doe', type: 'Paid Leave', days: 3, status: 'Pending', date: '2024-01-15' },
+                { id: 2, employee: 'Alice Brown', type: 'Sick Leave', days: 1, status: 'Pending', date: '2024-01-12' }
+            ];
+            
+            const container = document.getElementById('leaveApprovals');
+            container.innerHTML = approvals.map(approval => `
+                <div class="border border-gray-200 rounded-lg p-4">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <h3 class="font-medium">${approval.employee}</h3>
+                            <p class="text-sm text-gray-500">${approval.type} • ${approval.days} day(s) • ${approval.date}</p>
+                        </div>
+                        <span class="px-2 py-1 text-xs rounded-full bg-yellow-100 text-yellow-800">
+                            ${approval.status}
+                        </span>
+                    </div>
+                </div>
+            `).join('');
+        }
+    </script>
+</body>
+</html>
